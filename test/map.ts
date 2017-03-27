@@ -4,15 +4,18 @@ import {test} from "ava"
 
 interface ITestSnapshot{
     to: string
+    wrongKey?: any
 }
 
 interface ITest{
     to: string
+    wrongKey?: any
 }
 
 const createTestFactories = () => {
     const ItemFactory = createFactory({
-            to: 'world'
+            to: 'world',
+            wrongKey: () => {}
         })
 
     const Factory = (t.map(

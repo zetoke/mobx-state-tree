@@ -139,12 +139,18 @@ export class ObjectType extends ComplexType {
 
     @action applySnapshot(node: Node, target: any, snapshot: any): void {
         for (let key in snapshot) {
-            invariant(key in this.props, `It is not allowed to assign a value to non-declared property ${key} of ${this.name}`)
-            maybeNode(
-                target[key],
-                propertyNode => { propertyNode.applySnapshot(snapshot[key]) },
-                () =>   { target[key] = snapshot[key] }
-            )
+            // We do anything only with keys in props, skipping of fields not in scheme
+            if (key in this.props) {
+                maybeNode(
+                    target[key],
+                    propertyNode => {
+                        propertyNode.applySnapshot(snapshot[key])
+                    },
+                    () => {
+                        target[key] = snapshot[key]
+                    }
+                )
+            }
         }
     }
 
@@ -156,15 +162,22 @@ export class ObjectType extends ComplexType {
         if (!isPlainObject(snapshot))
             return false
         const props = this.props
-        let modelKeys = Object.keys(props).filter(key => isPrimitive(props[key]) || isFactory(props[key]))
         const snapshotKeys = Object.keys(snapshot)
-        if (snapshotKeys.length > modelKeys.length)
-            return false
+
         return snapshotKeys.every(key => {
-            let keyInConfig = key in props
+            // Filter computed props and etc
+            if (!(key in props) && (key in this.baseModel)) {
+                return false
+            }
+            // Just pass for addtional keys in object. We will do nothing with them.
+            if (!(key in props)) {
+                return true
+            }
+
             let bothArePrimitives = isPrimitive(props[key]) && isPrimitive(snapshot[key])
             let ifModelFactoryIsCastable = isFactory(props[key]) && props[key].is(snapshot[key])
-            return keyInConfig && (bothArePrimitives || ifModelFactoryIsCastable)
+
+            return (bothArePrimitives || ifModelFactoryIsCastable)
         })
     }
 }

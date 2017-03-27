@@ -27,7 +27,8 @@ test("it should recognize a valid snapshot", (t) => {
     t.deepEqual(Box.is({width: 1, height: 2}), true)
 })
 
-test("it should recognize an invalid snapshot", (t) => {
+// Valid, but fields not in scheme are not applied
+test.skip("it should recognize an invalid snapshot", (t) => {
     const {Box} = createTestFactories()
 
     t.deepEqual(Box.is({width: 1, height: 2, depth: 3}), false)
@@ -41,7 +42,8 @@ test("it should check valid nodes as well", (t) => {
     t.deepEqual(Box.is(doc), true)
 })
 
-test("it should check invalid nodes as well", (t) => {
+// TODO: type Box & type Cube as typescript union is valid after object.is changes
+test.skip("it should check invalid nodes as well", (t) => {
     const {Box, Cube} = createTestFactories()
 
     const doc = Cube()

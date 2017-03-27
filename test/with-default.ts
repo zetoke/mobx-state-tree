@@ -36,7 +36,8 @@ test("it should use the snapshot if provided", t => {
 test("it should throw if default value is invalid snapshot", t => {
     const Row = createFactory({
         name: '',
-        quantity: 0
+        quantity: 0,
+        wrongProp: () => {}
     })
 
     const error = t.throws(() => {

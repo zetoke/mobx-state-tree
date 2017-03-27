@@ -5,3 +5,4 @@ test-lib
 coverage
 .nyc_output
 mobx-state-tree.umd.js
+*idea
